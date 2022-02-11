@@ -76,25 +76,25 @@ SNO_Energy_flat=SnowMelt(date, P_mm, MaxTemp_C,MinTemp_C, myflowgage$declat,
 #for 10% North
 SNO_Energy_N=SnowMelt(date, P_mm, MaxTemp_C,MinTemp_C, myflowgage$declat,
                          slope =atan(10/100),
-                         aspect = 0, tempHt = 1, windHt = 2, groundAlbedo = 0.25,
+                         aspect =18*pi/180, tempHt = 1, windHt = 2, groundAlbedo = 0.25,
                          SurfEmissiv = 0.95, windSp = 2, forest = 0, startingSnowDepth_m = 0,
                          startingSnowDensity_kg_m3=450)
 #for 10% South
 SNO_Energy_S=SnowMelt(date, P_mm, MaxTemp_C,MinTemp_C, myflowgage$declat,
                          slope = atan(10/100),
-                         aspect = 180*pi/180, tempHt = 1, windHt = 2, groundAlbedo = 0.25,
+                         aspect = 190*pi/180, tempHt = 1, windHt = 2, groundAlbedo = 0.25,
                          SurfEmissiv = 0.95, windSp = 2, forest = 0, startingSnowDepth_m = 0,
                          startingSnowDensity_kg_m3=450)
 #for 45% NW
 SNO_Energy_NW=SnowMelt(date, P_mm, MaxTemp_C,MinTemp_C, myflowgage$declat,
                          slope =atan(45/100),
-                         aspect = 300*pi/180, tempHt = 1, windHt = 2, groundAlbedo = 0.25,
+                         aspect = 330*pi/180, tempHt = 1, windHt = 2, groundAlbedo = 0.25,
                          SurfEmissiv = 0.95, windSp = 2, forest = 0, startingSnowDepth_m = 0,
                          startingSnowDensity_kg_m3=450)
 #for45% SW
 SNO_Energy_SW=SnowMelt(date, P_mm, MaxTemp_C,MinTemp_C, myflowgage$declat,
                          slope =atan(45/100),
-                         aspect = 145*pi/180, tempHt = 1, windHt = 2, groundAlbedo = 0.25,
+                         aspect = 210*pi/180, tempHt = 1, windHt = 2, groundAlbedo = 0.25,
                          SurfEmissiv = 0.95, windSp = 2, forest = 0, startingSnowDepth_m = 0,
                          startingSnowDensity_kg_m3=450)
 
