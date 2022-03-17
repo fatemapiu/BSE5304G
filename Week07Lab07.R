@@ -536,6 +536,60 @@ plot(mybasin_fel,main='Filled DEM')
 plot(mybasindem-mybasin_fel,main='DEM - Filled DEM')
 plot(TI,main='TI')
 plot(TIC,main='TIC')
+#..........................................................................................
+#.........................................HW3.............................................
+#..........................................................................................
+#soil data
+# Make a poly with raster library (slow)
+# or from thee command line gdal (fast)
+# gdal_polygonize.py -8 mydemw.tif mydemw_poly_gdal.shp
+mydemw_poly=rasterToPolygons(mydemw,dissolve = T,na.rm = T)
+plot(mydemw_poly,add=T,border="red")
+mydemw_poly
+writeOGR(mydemw_poly,dsn=".",layer="mydemw",driver="ESRI Shapefile",overwrite_layer=TRUE)
+zip("mydemw.zip",list.files(pattern="mydemw[:.:]"))
+browseURL("https://websoilsurvey.sc.egov.usda.gov/App/WebSoilSurvey.aspx")
+url='https://websoilsurvey.sc.egov.usda.gov/DSD/Download/AOI/ot2r32ewxdxl0mhqlhan5rgo/wss_aoi_2022-03-17_13-51-35.zip'
+download.file(url,"mysoil.zip")
+unzip("mysoil.zip")
+
+mysoil=readOGR("wss_aoi_2022-03-17_13-51-35/spatial/soilmu_a_aoi.shp")    
+# Exploring the mysoil dataset
+mybbox=c(mysoil@bbox)
+# First associating mukey with cokey from component
+mysoil$mukey=mysoil$MUKEY  #renaming the column
+mukey_statement = format_SQL_in_statement(unique(mysoil$mukey))
+print(mukey_statement)
+q_mu2co = paste("SELECT mukey,cokey FROM component WHERE mukey IN ", mukey_statement, sep="")
+print(q_mu2co)
+mu2co = SDA_query(q_mu2co)
+# Second associating cokey with ksat_r,awc_r,hzdepb_r from chorizon
+cokey_statement = format_SQL_in_statement(unique(mu2co$cokey))
+q_co2ch = paste("SELECT cokey,ksat_r,awc_r,hzdepb_r  FROM chorizon WHERE cokey IN ", cokey_statement, sep="")
+print(q_co2ch)
+co2ch = SDA_query(q_co2ch)
+# Last, bringing them back together, and aggregate based on max values
+# of ksat_r,awc_r, and hzdepb_r
+mu2ch=merge(mu2co,co2ch)
+summary(mu2ch)
+mu2chmax=aggregate(mu2ch,list(mu2ch$mukey),max)
+aws<-merge(mysoil,mu2chmax,by="mukey")
+#nlcd
+nlcd=raster("NLCD.tiff")
+nlcd=projectRaster(nlcd,crs=crs_utm)
+mybasin_nl=crop(nlcd,mybasinmask)
+mybasin_nl=mask(mybasin_nl,mybasinmask)
+nl=resample(nlcd,mybasinmask)
+mybasin_nl=mask(nl,mybasinmask)
+plot(mybasin_nl)
+
+#plotting Filled DEM, Difference between DEM and Filled DEM, TI, and TI Classes
+par(mar=c(1.5, 1.5,1.5,1.5))
+plot(mybasindem,main='DEM')
+plot(TIC,main='TIC')
+plot(mybasin_nl,main='Land Cover')
+spplot(aws, zcol="awc_r",main="AWC",
+       colorkey=T, col.regions=topo.colors(100), checkEmptyRC=T,add=T)
 
 #.........................................................................................
 #.........................................HW4.............................................
